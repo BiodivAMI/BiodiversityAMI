@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Katalog Biodiversitas Digital — Dokumentasi flora dan fauna area reklamasi tambang PT AlamTri Minerals Indonesia">
+  <meta name="keywords" content="biodiversitas, katalog, flora, fauna, reklamasi, tambang, AlamTri">
+  <meta name="author" content="AlamTri Minerals Indonesia">
+  <meta name="theme-color" content="#2D5016">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Katalog Biodiversitas Digital — AlamTri Minerals Indonesia</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+:root {
+  --color-forest: #2D5016;
+  --color-forest-light: #3A6B1E;
+  --color-forest-dark: #1E3A0E;
+  --color-forest-50: rgba(45, 80, 22, 0.08);
+  --color-forest-100: rgba(45, 80, 22, 0.15);
+  --color-navy: #1B3A4B;
+  --color-navy-light: #264E63;
+  --color-navy-dark: #0F2330;
+  --color-tosca: #2CA58D;
+  --color-tosca-light: #3BBFA5;
+  --color-tosca-dark: #1E8A74;
+  --color-tosca-50: rgba(44, 165, 141, 0.1);
+  --color-orange: #E8832A;
+  --color-orange-light: #F09A4A;
+  --color-green: #7AB648;
+  --color-green-light: #8FC85E;
+  --color-cream: #FAFAF5;
+  --color-cream-warm: #F5F0E8;
+  --color-white: #FFFFFF;
+  --color-gray-50: #F7F6F3;
+  --color-gray-100: #E8E5DD;
+  --color-gray-200: #D4D0C8;
+  --color-gray-300: #B5B0A5;
+  --color-gray-400: #918C82;
+  --color-gray-500: #6B6560;
+  --color-gray-600: #4A4540;
+  --color-gray-700: #2E2A26;
+  --color-gray-800: #1A1714;
+  --color-success: #4CAF50;
+  --color-success-light: #E8F5E9;
+  --color-error: #E53935;
+  --color-error-light: #FFEBEE;
+  --color-warning: #FF9800;
+  --color-warning-light: #FFF3E0;
+  --shadow-xs: 0 1px 2px rgba(27,58,75,0.05);
+  --shadow-sm: 0 1px 3px rgba(27,58,75,0.08), 0 1px 2px rgba(27,58,75,0.06);
+  --shadow-md: 0 4px 6px rgba(27,58,75,0.07), 0 2px 4px rgba(27,58,75,0.06);
+  --shadow-lg: 0 10px 15px rgba(27,58,75,0.08), 0 4px 6px rgba(27,58,75,0.05);
+  --shadow-xl: 0 20px 25px rgba(27,58,75,0.1), 0 10px 10px rgba(27,58,75,0.04);
+  --shadow-2xl: 0 25px 50px rgba(27,58,75,0.15);
+  --shadow-card-hover: 0 12px 28px rgba(27,58,75,0.12), 0 4px 8px rgba(27,58,75,0.08);
+  --shadow-glow-tosca: 0 0 20px rgba(44,165,141,0.3);
+  --shadow-glow-forest: 0 0 20px rgba(45,80,22,0.3);
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem;
+  --text-lg: 1.125rem; --text-xl: 1.25rem; --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem; --text-4xl: 2.25rem; --text-5xl: 3rem;
+  --leading-tight: 1.25; --leading-normal: 1.5; --leading-relaxed: 1.625;
+  --weight-normal: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.4,0,0.2,1);
+  --transition-bounce: 500ms cubic-bezier(0.34,1.56,0.64,1);
+  --transition-spring: 600ms cubic-bezier(0.175,0.885,0.32,1.275);
+  --z-dropdown: 100; --z-sticky: 200; --z-fixed: 300;
+  --z-modal-backdrop: 400; --z-modal: 500; --z-toast: 600;
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  --bottom-nav-height: 68px;
+  --content-max-width: 1200px;
+  --card-min-width: 280px;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);font-size:var(--text-base);line-height:var(--leading-normal);color:var(--color-navy);background:var(--color-cream);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-heading);line-height:var(--leading-tight);color:var(--color-navy-dark)}
+h1{font-size:var(--text-4xl);font-weight:var(--weight-bold);letter-spacing:-0.02em}
+h2{font-size:var(--text-2xl);font-weight:var(--weight-semibold)}
+h3{font-size:var(--text-xl);font-weight:var(--weight-semibold);font-family:var(--font-body)}
+a{color:var(--color-tosca);text-decoration:none;transition:color var(--transition-fast)}
+a:hover{color:var(--color-tosca-dark)}
+img{max-width:100%;height:auto;display:block}
+ul,ol{list-style:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;outline:none}
+input,textarea,select{font-family:inherit;font-size:inherit;border:none;outline:none;background:none}
+::selection{background:var(--color-tosca-50);color:var(--color-navy-dark)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--color-gray-300);border-radius:var(--radius-full)}
+:focus-visible{outline:2px solid var(--color-tosca);outline-offset:2px;border-radius:var(--radius-xs)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);font-weight:var(--weight-semibold);font-size:var(--text-sm);line-height:1;white-space:nowrap;transition:all var(--transition-normal);cursor:pointer;user-select:none;position:relative;overflow:hidden}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--color-forest),var(--color-forest-light));color:var(--color-white);box-shadow:var(--shadow-sm)}
+.btn-primary:hover{box-shadow:var(--shadow-md),var(--shadow-glow-forest);transform:translateY(-1px)}
+.btn-secondary{background:var(--color-white);color:var(--color-navy);border:1.5px solid var(--color-gray-200);box-shadow:var(--shadow-xs)}
+.btn-secondary:hover{border-color:var(--color-tosca);color:var(--color-tosca-dark)}
+.btn-accent{background:linear-gradient(135deg,var(--color-tosca),var(--color-tosca-light));color:var(--color-white);box-shadow:var(--shadow-sm)}
+.btn-accent:hover{box-shadow:var(--shadow-md),var(--shadow-glow-tosca);transform:translateY(-1px)}
+.btn-danger{background:var(--color-error);color:var(--color-white)}
+.btn-danger:hover{background:#C62828}
+.btn-ghost{background:transparent;color:var(--color-navy)}
+.btn-ghost:hover{background:var(--color-forest-50)}
+.btn-lg{padding:var(--space-4) var(--space-8);font-size:var(--text-base);border-radius:var(--radius-lg)}
+.btn-sm{padding:var(--space-2) var(--space-4);font-size:var(--text-xs)}
+.btn-icon{width:40px;height:40px;padding:0;border-radius:var(--radius-md)}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+
+/* ── CARDS ── */
+.card{background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;transition:all var(--transition-normal);cursor:pointer;position:relative}
+.card:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-4px)}
+.card-image{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform var(--transition-slow)}
+.card:hover .card-image{transform:scale(1.05)}
+.card-image-wrapper{overflow:hidden;position:relative}
+.card-body{padding:var(--space-4) var(--space-5)}
+.card-title{font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-navy-dark);margin-bottom:var(--space-1)}
+.card-subtitle{font-size:var(--text-sm);font-style:italic;color:var(--color-gray-500);margin-bottom:var(--space-3)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);line-height:1.4}
+.badge-flora{background:var(--color-forest-50);color:var(--color-forest);border:1px solid rgba(45,80,22,0.2)}
+.badge-fauna{background:var(--color-tosca-50);color:var(--color-tosca-dark);border:1px solid rgba(44,165,141,0.2)}
+.badge-location{background:rgba(232,131,42,0.1);color:var(--color-orange);border:1px solid rgba(232,131,42,0.2)}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:var(--space-5)}
+.form-label{display:block;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-navy);margin-bottom:var(--space-2)}
+.form-input,.form-select,.form-textarea{width:100%;padding:var(--space-3) var(--space-4);background:var(--color-white);border:1.5px solid var(--color-gray-200);border-radius:var(--radius-md);color:var(--color-navy);font-size:var(--text-base);transition:all var(--transition-fast)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--color-tosca);box-shadow:0 0 0 3px var(--color-tosca-50)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--color-gray-300)}
+.form-input.error,.form-textarea.error{border-color:var(--color-error);box-shadow:0 0 0 3px var(--color-error-light)}
+.form-error{font-size:var(--text-xs);color:var(--color-error);margin-top:var(--space-1)}
+.form-textarea{min-height:100px;resize:vertical}
+.form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:40px;background-color:var(--color-white)}
+
+/* ── SEARCH ── */
+.search-container{position:relative;max-width:480px;width:100%}
+.search-input{width:100%;padding:var(--space-3) var(--space-4) var(--space-3) 44px;background:var(--color-white);border:1.5px solid var(--color-gray-200);border-radius:var(--radius-full);font-size:var(--text-base);color:var(--color-navy);transition:all var(--transition-normal);box-shadow:var(--shadow-xs)}
+.search-input:focus{border-color:var(--color-tosca);box-shadow:var(--shadow-md),0 0 0 3px var(--color-tosca-50)}
+.search-icon{position:absolute;left:var(--space-4);top:50%;transform:translateY(-50%);color:var(--color-gray-400);pointer-events:none}
+.search-clear{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);width:28px;height:28px;display:none;align-items:center;justify-content:center;border-radius:var(--radius-full);color:var(--color-gray-400);cursor:pointer}
+.search-clear.visible{display:flex}
+.search-clear:hover{background:var(--color-gray-100);color:var(--color-navy)}
+
+/* ── FILTER CHIPS ── */
+.filter-chips{display:flex;flex-wrap:wrap;gap:var(--space-2);padding:var(--space-2) 0}
+.filter-chip{display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-2) var(--space-4);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);background:var(--color-white);color:var(--color-gray-600);border:1.5px solid var(--color-gray-200);cursor:pointer;transition:all var(--transition-normal);user-select:none}
+.filter-chip:hover{border-color:var(--color-tosca);color:var(--color-tosca-dark)}
+.filter-chip.active{background:var(--color-forest);color:var(--color-white);border-color:var(--color-forest)}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;top:var(--space-6);right:var(--space-6);z-index:var(--z-toast);display:flex;flex-direction:column;gap:var(--space-3);pointer-events:none}
+.toast{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5);background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-xl);pointer-events:auto;animation:toastIn 400ms cubic-bezier(0.175,0.885,0.32,1.275) forwards;min-width:280px;max-width:420px;border-left:4px solid var(--color-tosca)}
+.toast-success{border-left-color:var(--color-success)}.toast-error{border-left-color:var(--color-error)}.toast-warning{border-left-color:var(--color-warning)}
+.toast-message{flex:1;font-size:var(--text-sm);color:var(--color-navy)}
+.toast-close{flex-shrink:0;cursor:pointer;color:var(--color-gray-400);transition:color var(--transition-fast);font-size:var(--text-sm)}
+.toast-close:hover{color:var(--color-navy)}
+.toast.removing{animation:toastOut 300ms ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(100%) scale(0.8)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(100%)}}
+
+/* ── MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,35,48,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:var(--z-modal-backdrop);animation:fadeIn 200ms ease forwards;display:flex;align-items:center;justify-content:center;padding:var(--space-6)}
+.modal{background:var(--color-white);border-radius:var(--radius-xl);box-shadow:var(--shadow-2xl);max-width:440px;width:100%;animation:modalIn 300ms cubic-bezier(0.175,0.885,0.32,1.275) forwards;z-index:var(--z-modal)}
+.modal-header{padding:var(--space-6) var(--space-6) var(--space-4)}
+.modal-title{font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-navy-dark);font-family:var(--font-body)}
+.modal-body{padding:0 var(--space-6) var(--space-4);color:var(--color-gray-600);font-size:var(--text-sm);line-height:var(--leading-relaxed)}
+.modal-footer{padding:var(--space-4) var(--space-6) var(--space-6);display:flex;justify-content:flex-end;gap:var(--space-3)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ── STATS ── */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
+.stat-card{background:var(--color-white);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-xs);border:1px solid var(--color-gray-100);text-align:center;transition:all var(--transition-normal)}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.stat-icon{font-size:var(--text-2xl);margin-bottom:var(--space-2)}
+.stat-value{font-size:var(--text-3xl);font-weight:var(--weight-bold);color:var(--color-navy-dark);line-height:1;margin-bottom:var(--space-1)}
+.stat-label{font-size:var(--text-xs);color:var(--color-gray-500);text-transform:uppercase;letter-spacing:0.05em;font-weight:var(--weight-medium)}
+
+/* ── PHOTO UPLOAD ── */
+.photo-upload{border:2px dashed var(--color-gray-200);border-radius:var(--radius-lg);padding:var(--space-10);text-align:center;cursor:pointer;transition:all var(--transition-normal);background:var(--color-gray-50);position:relative}
+.photo-upload:hover,.photo-upload.drag-over{border-color:var(--color-tosca);background:var(--color-tosca-50)}
+.photo-upload-icon{font-size:48px;color:var(--color-gray-300);margin-bottom:var(--space-3)}
+.photo-upload:hover .photo-upload-icon{color:var(--color-tosca)}
+.photo-upload-text{font-size:var(--text-sm);color:var(--color-gray-500)}
+.photo-upload-text strong{color:var(--color-tosca)}
+.photo-preview{position:relative;border-radius:var(--radius-lg);overflow:hidden;max-height:300px}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-preview-remove{position:absolute;top:var(--space-3);right:var(--space-3);width:32px;height:32px;border-radius:var(--radius-full);background:rgba(0,0,0,0.6);color:var(--color-white);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition-fast)}
+.photo-preview-remove:hover{background:var(--color-error)}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:calc(var(--bottom-nav-height) + var(--space-5));right:var(--space-5);width:56px;height:56px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--color-forest),var(--color-forest-light));color:var(--color-white);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg),var(--shadow-glow-forest);cursor:pointer;transition:all var(--transition-normal);z-index:var(--z-sticky);font-size:24px}
+.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:var(--shadow-xl),var(--shadow-glow-forest)}
+.fab:active{transform:scale(0.95)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:var(--space-16) var(--space-6);color:var(--color-gray-500)}
+.empty-state-icon{font-size:64px;margin-bottom:var(--space-4);opacity:0.5}
+.empty-state-title{font-size:var(--text-xl);font-weight:var(--weight-semibold);color:var(--color-gray-600);margin-bottom:var(--space-2)}
+.empty-state-text{font-size:var(--text-sm);max-width:360px;margin:0 auto}
+
+/* ── LOADING SKELETON ── */
+.skeleton{background:linear-gradient(90deg,var(--color-gray-100) 25%,var(--color-gray-50) 50%,var(--color-gray-100) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-md)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.skeleton-img{height:210px}
+.skeleton-body{padding:var(--space-4) var(--space-5)}
+.skeleton-line{height:14px;margin-bottom:var(--space-2);border-radius:var(--radius-full)}
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay{position:fixed;inset:0;background:rgba(250,250,245,0.85);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:var(--z-modal);gap:var(--space-4)}
+.loading-spinner{width:48px;height:48px;border:4px solid var(--color-gray-200);border-top-color:var(--color-forest);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:var(--text-sm);color:var(--color-gray-500);font-weight:var(--weight-medium)}
+
+/* ── SETUP BANNER ── */
+.setup-banner{background:linear-gradient(135deg,#fff3cd,#fff8e1);border:1px solid #ffc107;border-radius:var(--radius-lg);padding:var(--space-6);margin-bottom:var(--space-6)}
+.setup-banner h3{color:#856404;font-family:var(--font-body);font-size:var(--text-base);margin-bottom:var(--space-3)}
+.setup-banner code{background:rgba(0,0,0,0.08);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:var(--text-sm)}
+.setup-banner ol{list-style:decimal;padding-left:20px;color:#664d03;font-size:var(--text-sm);line-height:2}
+
+/* ══════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════ */
+.app{display:flex;min-height:100vh}
+.app-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.app-content{flex:1;padding:var(--space-6);max-width:var(--content-max-width);width:100%;margin:0 auto}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-width);height:100vh;position:fixed;left:0;top:0;background:var(--color-white);border-right:1px solid var(--color-gray-100);display:none;flex-direction:column;z-index:var(--z-fixed);overflow-y:auto}
+.sidebar-header{padding:var(--space-6);display:flex;align-items:center;gap:var(--space-3);border-bottom:1px solid var(--color-gray-100)}
+.sidebar-logo{width:44px;height:44px;object-fit:contain;flex-shrink:0}
+.sidebar-brand{display:flex;flex-direction:column}
+.sidebar-brand-name{font-family:var(--font-body);font-size:var(--text-sm);font-weight:var(--weight-bold);color:var(--color-navy-dark);line-height:var(--leading-tight)}
+.sidebar-brand-sub{font-size:var(--text-xs);color:var(--color-gray-500);margin-top:2px}
+.sidebar-nav{flex:1;padding:var(--space-4) var(--space-3)}
+.sidebar-section{margin-bottom:var(--space-4)}
+.sidebar-section-title{font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-gray-400);text-transform:uppercase;letter-spacing:0.08em;padding:var(--space-2) var(--space-3);margin-bottom:var(--space-1)}
+.sidebar-link{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);color:var(--color-gray-600);font-size:var(--text-sm);font-weight:var(--weight-medium);transition:all var(--transition-fast);cursor:pointer;text-decoration:none;margin-bottom:2px}
+.sidebar-link:hover{background:var(--color-forest-50);color:var(--color-forest)}
+.sidebar-link.active{background:linear-gradient(135deg,var(--color-forest),var(--color-forest-light));color:var(--color-white);box-shadow:var(--shadow-sm)}
+.sidebar-link-icon{width:20px;text-align:center;font-size:var(--text-lg);flex-shrink:0}
+.sidebar-footer{padding:var(--space-4) var(--space-3);border-top:1px solid var(--color-gray-100)}
+.sidebar-user{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);background:var(--color-gray-50)}
+.sidebar-avatar{width:36px;height:36px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--color-tosca),var(--color-forest));display:flex;align-items:center;justify-content:center;color:var(--color-white);font-weight:var(--weight-bold);font-size:var(--text-sm);flex-shrink:0}
+.sidebar-user-name{font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-navy)}
+.sidebar-user-role{font-size:var(--text-xs);color:var(--color-gray-500)}
+
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-height);background:var(--color-white);border-top:1px solid var(--color-gray-100);display:flex;align-items:center;justify-content:space-around;padding:0 var(--space-2);z-index:var(--z-fixed);box-shadow:0 -2px 10px rgba(0,0,0,0.05)}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);color:var(--color-gray-400);font-size:10px;font-weight:var(--weight-medium);cursor:pointer;transition:all var(--transition-fast);text-decoration:none;min-width:56px;position:relative}
+.bottom-nav-item::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%) scaleX(0);width:32px;height:3px;background:var(--color-forest);border-radius:0 0 var(--radius-full) var(--radius-full);transition:transform var(--transition-normal)}
+.bottom-nav-item:hover{color:var(--color-forest)}
+.bottom-nav-item.active{color:var(--color-forest)}
+.bottom-nav-item.active::before{transform:translateX(-50%) scaleX(1)}
+.bottom-nav-icon{font-size:22px;line-height:1;transition:transform var(--transition-fast)}
+.bottom-nav-item.active .bottom-nav-icon{transform:scale(1.15)}
+
+/* Mobile Header */
+.mobile-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);background:var(--color-white);border-bottom:1px solid var(--color-gray-100);position:sticky;top:0;z-index:var(--z-sticky)}
+.mobile-header-logo{display:flex;align-items:center;gap:var(--space-2)}
+.mobile-header-logo img{height:32px;width:auto}
+.mobile-header-title{font-family:var(--font-body);font-size:var(--text-sm);font-weight:var(--weight-bold);color:var(--color-navy-dark)}
+
+/* Grid */
+.species-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-min-width),1fr));gap:var(--space-6)}
+
+/* Page transitions */
+.page-enter{animation:pageEnter 400ms ease forwards}
+@keyframes pageEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stagger-item{opacity:0;transform:translateY(20px);animation:staggerIn 500ms ease forwards}
+@keyframes staggerIn{to{opacity:1;transform:translateY(0)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1023px){
+  .sidebar{display:none!important}
+  .bottom-nav{display:flex}
+  .app-main{padding-bottom:var(--bottom-nav-height)}
+  .app-content{padding:var(--space-4)}
+  .mobile-header{display:flex}
+}
+@media(min-width:1024px){
+  .sidebar{display:flex}
+  .bottom-nav{display:none}
+  .app-main{margin-left:var(--sidebar-width)}
+  .mobile-header{display:none}
+  .app-content{padding:var(--space-8)}
+  .species-grid{grid-template-columns:repeat(3,1fr)}
+  .fab{bottom:var(--space-8);right:var(--space-8)}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .species-grid{grid-template-columns:repeat(2,1fr)}
+  .app-content{padding:var(--space-6)}
+}
+@media(max-width:480px){
+  .species-grid{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:var(--text-2xl)}
+  h2{font-size:var(--text-xl)}
+  .toast-container{left:var(--space-4);right:var(--space-4)}
+  .toast{min-width:auto}
+}
+
+/* ══════════════════════════════════════════
+   LANDING PAGE
+   ══════════════════════════════════════════ */
+.landing-page{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a1a0f 0%,#1a3a1f 30%,#0f2e1a 60%,#1B3A4B 100%)}
+.landing-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.particle{position:absolute;border-radius:50%;animation:floatParticle linear infinite}
+@keyframes floatParticle{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) rotate(720deg);opacity:0}}
+.landing-card{position:relative;z-index:2;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-2xl);padding:var(--space-12) var(--space-10);text-align:center;max-width:480px;width:90%;animation:cardAppear 800ms cubic-bezier(0.175,0.885,0.32,1.275) forwards;animation-delay:300ms;opacity:0}
+@keyframes cardAppear{from{opacity:0;transform:scale(0.9) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.landing-logo{width:120px;height:auto;margin:0 auto var(--space-6);filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.landing-title{font-family:var(--font-heading);font-size:var(--text-3xl);font-weight:var(--weight-bold);color:var(--color-white);margin-bottom:var(--space-2);text-shadow:0 2px 4px rgba(0,0,0,0.3)}
+.landing-subtitle{font-size:var(--text-sm);color:rgba(255,255,255,0.7);margin-bottom:var(--space-3)}
+.landing-company{font-size:var(--text-xs);color:rgba(255,255,255,0.5);margin-bottom:var(--space-8);letter-spacing:0.05em;text-transform:uppercase}
+.landing-actions{display:flex;flex-direction:column;gap:var(--space-3)}
+.landing-btn-guest{padding:var(--space-4) var(--space-6);background:linear-gradient(135deg,var(--color-forest),var(--color-green));color:var(--color-white);border-radius:var(--radius-lg);font-weight:var(--weight-semibold);font-size:var(--text-base);transition:all var(--transition-normal);cursor:pointer;border:none;box-shadow:0 4px 15px rgba(45,80,22,0.4);display:flex;align-items:center;justify-content:center;gap:var(--space-2)}
+.landing-btn-guest:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(45,80,22,0.5)}
+.landing-btn-admin{padding:var(--space-3) var(--space-6);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.9);border-radius:var(--radius-lg);font-weight:var(--weight-medium);font-size:var(--text-sm);transition:all var(--transition-normal);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:var(--space-2)}
+.landing-btn-admin:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4)}
+
+/* ── DETAIL PAGE ── */
+.detail-page{max-width:800px;margin:0 auto}
+.detail-back{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-gray-500);font-size:var(--text-sm);font-weight:var(--weight-medium);margin-bottom:var(--space-5);cursor:pointer;transition:color var(--transition-fast)}
+.detail-back:hover{color:var(--color-forest)}
+.detail-hero{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);margin-bottom:var(--space-6);background:var(--color-gray-100)}
+.detail-header{margin-bottom:var(--space-6)}
+.detail-name{font-size:var(--text-3xl);margin-bottom:var(--space-1)}
+.detail-latin{font-size:var(--text-lg);font-style:italic;color:var(--color-gray-500);margin-bottom:var(--space-4)}
+.detail-badges{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.detail-section{margin-bottom:var(--space-6);padding:var(--space-6);background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);border:1px solid var(--color-gray-100)}
+.detail-section-title{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-navy-dark);margin-bottom:var(--space-4);padding-bottom:var(--space-3);border-bottom:2px solid var(--color-forest-50);font-family:var(--font-body)}
+.detail-section-icon{font-size:var(--text-xl);color:var(--color-tosca)}
+.detail-field{display:flex;padding:var(--space-3) 0;border-bottom:1px solid var(--color-gray-100)}
+.detail-field:last-child{border-bottom:none;padding-bottom:0}
+.detail-field-label{width:140px;flex-shrink:0;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-gray-500)}
+.detail-field-value{flex:1;font-size:var(--text-sm);color:var(--color-navy)}
+.detail-actions{display:flex;gap:var(--space-3);margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid var(--color-gray-100)}
+@media(max-width:480px){
+  .detail-field{flex-direction:column;gap:var(--space-1)}
+  .detail-field-label{width:auto}
+  .detail-name{font-size:var(--text-2xl)}
+}
+
+/* ── LOGIN PAGE ── */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--color-cream);padding:var(--space-6)}
+.login-card{background:var(--color-white);border-radius:var(--radius-2xl);box-shadow:var(--shadow-xl);padding:var(--space-10) var(--space-8);max-width:420px;width:100%;animation:modalIn 500ms cubic-bezier(0.175,0.885,0.32,1.275) forwards}
+.login-header{text-align:center;margin-bottom:var(--space-8)}
+.login-logo{width:80px;margin:0 auto var(--space-4)}
+.login-title{font-size:var(--text-2xl);margin-bottom:var(--space-2)}
+.login-subtitle{font-size:var(--text-sm);color:var(--color-gray-500)}
+.login-form{display:flex;flex-direction:column;gap:var(--space-5)}
+.login-input-group{position:relative}
+.login-input-icon{position:absolute;left:var(--space-4);top:50%;transform:translateY(-50%);color:var(--color-gray-400);font-size:var(--text-lg)}
+.login-input{width:100%;padding:var(--space-4) var(--space-4) var(--space-4) 44px;background:var(--color-gray-50);border:1.5px solid var(--color-gray-200);border-radius:var(--radius-md);font-size:var(--text-base);color:var(--color-navy);transition:all var(--transition-fast)}
+.login-input:focus{border-color:var(--color-tosca);box-shadow:0 0 0 3px var(--color-tosca-50);background:var(--color-white)}
+.login-toggle-password{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);cursor:pointer;color:var(--color-gray-400);padding:var(--space-1)}
+.login-toggle-password:hover{color:var(--color-navy)}
+.login-error{background:var(--color-error-light);color:var(--color-error);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);text-align:center;display:none}
+.login-error.visible{display:block;animation:shake 400ms ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.login-back{text-align:center;margin-top:var(--space-5)}
+.login-back a{font-size:var(--text-sm);color:var(--color-gray-500)}
+
+/* ── FORM PAGE ── */
+.form-page{max-width:680px;margin:0 auto}
+.form-card{background:var(--color-white);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--space-8);margin-bottom:var(--space-6);border:1px solid var(--color-gray-100)}
+.form-section-title{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-navy-dark);margin-bottom:var(--space-5);padding-bottom:var(--space-3);border-bottom:2px solid var(--color-forest-50)}
+.form-section-icon{color:var(--color-tosca)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+@media(max-width:640px){.form-row{grid-template-columns:1fr}.form-card{padding:var(--space-5)}}
+.form-radio-group{display:flex;gap:var(--space-4)}
+.form-radio{display:flex;align-items:center;gap:var(--space-2);cursor:pointer}
+.form-radio input[type="radio"]{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid var(--color-gray-300);border-radius:50%;position:relative;cursor:pointer;transition:all var(--transition-fast)}
+.form-radio input[type="radio"]:checked{border-color:var(--color-forest)}
+.form-radio input[type="radio"]:checked::after{content:'';position:absolute;top:3px;left:3px;width:10px;height:10px;background:var(--color-forest);border-radius:50%}
+.form-radio span{font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-navy)}
+.form-actions{display:flex;justify-content:flex-end;gap:var(--space-3);padding-top:var(--space-4)}
+
+/* ── ADMIN TOOLBAR ── */
+.admin-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);flex-wrap:wrap;gap:var(--space-3)}
+.admin-card-actions{position:absolute;top:var(--space-3);right:var(--space-3);display:flex;gap:var(--space-2);opacity:0;transition:opacity var(--transition-normal);z-index:2}
+.card:hover .admin-card-actions{opacity:1}
+.admin-action-btn{width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-white);color:var(--color-navy);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-md);transition:all var(--transition-fast);font-size:var(--text-sm);border:none}
+.admin-action-btn:hover{transform:scale(1.1)}
+.admin-action-btn.edit:hover{background:var(--color-tosca);color:var(--color-white)}
+.admin-action-btn.delete:hover{background:var(--color-error);color:var(--color-white)}
+
+/* ── CATALOG HEADER ── */
+.catalog-header{margin-bottom:var(--space-6)}
+.catalog-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);flex-wrap:wrap;gap:var(--space-3)}
+.catalog-count{font-size:var(--text-sm);color:var(--color-gray-500);font-weight:var(--weight-normal);font-family:var(--font-body)}
+.catalog-controls{display:flex;flex-direction:column;gap:var(--space-4);margin-bottom:var(--space-6)}
+@media(min-width:768px){.catalog-controls{flex-direction:row;align-items:center}}
+
+/* ── SPECIES PLACEHOLDER ── */
+.species-image-placeholder{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:64px;background:linear-gradient(135deg,var(--color-cream-warm),var(--color-gray-100))}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+// ============================================
+// ⚙️  KONFIGURASI SUPABASE
+// Ganti dua nilai di bawah ini dengan milikmu!
+// ============================================
+const SUPABASE_URL = 'GANTI_DENGAN_URL_SUPABASE_KAMU';
+const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY_SUPABASE_KAMU';
+
+// ============================================
+// SEED DATA (12 spesies awal)
+// ============================================
+const SEED_DATA = [
+  {id:"sp001",type:"fauna",nama_indonesia:"Elang Jawa",nama_latin:"Nisaetus bartelsi",ordo:"Accipitriformes",famili:"Accipitridae",genus:"Nisaetus",kebiasaan:"Diurnal, predator puncak. Berburu mamalia kecil, reptil, dan burung lain dari ketinggian.",habitat:"Hutan hujan tropis dataran rendah hingga pegunungan, area tepi hutan dengan tajuk rapat.",lokasi_ditemukan:"Area Reklamasi BN1",persebaran_nasional:"Endemik Pulau Jawa, tersebar di hutan-hutan pegunungan Jawa Barat hingga Jawa Timur.",foto_url:""},
+  {id:"sp002",type:"flora",nama_indonesia:"Meranti Merah",nama_latin:"Shorea leprosula",ordo:"Malvales",famili:"Dipterocarpaceae",genus:"Shorea",kebiasaan:"Tumbuhan berkayu besar, semi-toleran naungan. Pertumbuhan mencapai 60m. Berbunga massal setiap 3-5 tahun.",habitat:"Hutan hujan tropis dataran rendah, tanah liat berpasir, area dengan curah hujan tinggi.",lokasi_ditemukan:"Area Reklamasi BN2",persebaran_nasional:"Sumatera, Kalimantan, Semenanjung Malaya.",foto_url:""},
+  {id:"sp003",type:"fauna",nama_indonesia:"Bekantan",nama_latin:"Nasalis larvatus",ordo:"Primates",famili:"Cercopithecidae",genus:"Nasalis",kebiasaan:"Diurnal, arboreal, hidup berkelompok 10-30 individu. Herbivora spesialis daun muda dan buah.",habitat:"Hutan mangrove, hutan rawa gambut, hutan riparian di sepanjang sungai.",lokasi_ditemukan:"Hutan Sekitar PT Lahai Coal",persebaran_nasional:"Endemik Pulau Kalimantan.",foto_url:""},
+  {id:"sp004",type:"flora",nama_indonesia:"Kantong Semar",nama_latin:"Nepenthes rafflesiana",ordo:"Caryophyllales",famili:"Nepenthaceae",genus:"Nepenthes",kebiasaan:"Tumbuhan karnivora, memangsa serangga melalui perangkap kantong berisi cairan enzim pencerna.",habitat:"Hutan kerangas, tanah berpasir miskin hara, area terbuka dengan kelembapan tinggi.",lokasi_ditemukan:"Area Reklamasi BMid",persebaran_nasional:"Sumatera, Kalimantan, Semenanjung Malaya.",foto_url:""},
+  {id:"sp005",type:"fauna",nama_indonesia:"Rangkong Badak",nama_latin:"Buceros rhinoceros",ordo:"Bucerotiformes",famili:"Bucerotidae",genus:"Buceros",kebiasaan:"Diurnal, frugivora utama. Terbang berpasangan atau kelompok kecil. Berbunyi keras saat terbang.",habitat:"Hutan hujan primer dan sekunder, kanopi atas hutan tropis dataran rendah hingga 1400 mdpl.",lokasi_ditemukan:"Hutan Sekitar PT Maruwai Coal",persebaran_nasional:"Sumatera, Kalimantan, Jawa.",foto_url:""},
+  {id:"sp006",type:"flora",nama_indonesia:"Ulin",nama_latin:"Eusideroxylon zwageri",ordo:"Laurales",famili:"Lauraceae",genus:"Eusideroxylon",kebiasaan:"Tumbuhan berkayu sangat keras (berat jenis >1.0), pertumbuhan sangat lambat. Umur bisa mencapai 1000 tahun.",habitat:"Hutan hujan tropis dataran rendah Kalimantan, tanah podsolik merah-kuning.",lokasi_ditemukan:"Hutan Sekitar PT Lahai Coal",persebaran_nasional:"Kalimantan dan Sumatera bagian timur.",foto_url:""},
+  {id:"sp007",type:"fauna",nama_indonesia:"Kucing Hutan",nama_latin:"Prionailurus bengalensis",ordo:"Carnivora",famili:"Felidae",genus:"Prionailurus",kebiasaan:"Nokturnal, soliter, karnivora. Berburu tikus, burung kecil, serangga, dan amfibi.",habitat:"Hutan primer dan sekunder, area perkebunan dekat hutan, semak belukar.",lokasi_ditemukan:"Area Reklamasi BN1",persebaran_nasional:"Sumatera, Kalimantan, Jawa, Bali.",foto_url:""},
+  {id:"sp008",type:"flora",nama_indonesia:"Pakis Haji",nama_latin:"Cycas rumphii",ordo:"Cycadales",famili:"Cycadaceae",genus:"Cycas",kebiasaan:"Tumbuhan purba (fosil hidup), tumbuh lambat, dioecious. Dapat hidup ratusan tahun.",habitat:"Hutan pantai, hutan batu karang, tanah berkapur, area terbuka dengan drainase baik.",lokasi_ditemukan:"Area Reklamasi BN2",persebaran_nasional:"Indonesia bagian timur, Sulawesi, Maluku, Papua.",foto_url:""},
+  {id:"sp009",type:"fauna",nama_indonesia:"Biawak Air",nama_latin:"Varanus salvator",ordo:"Squamata",famili:"Varanidae",genus:"Varanus",kebiasaan:"Diurnal, semi-akuatik, omnivora oportunistik. Perenang handal, bisa menyelam hingga 30 menit.",habitat:"Tepian sungai, rawa, mangrove, dan genangan air di area hutan.",lokasi_ditemukan:"Area Reklamasi BMid",persebaran_nasional:"Seluruh kepulauan Indonesia.",foto_url:""},
+  {id:"sp010",type:"flora",nama_indonesia:"Jelutung",nama_latin:"Dyera costulata",ordo:"Gentianales",famili:"Apocynaceae",genus:"Dyera",kebiasaan:"Pohon pionir, tumbuh cepat di lahan terbuka. Menghasilkan getah lateks putih bernilai ekonomi.",habitat:"Hutan rawa gambut, hutan sekunder, area bekas tebangan.",lokasi_ditemukan:"Hutan Sekitar PT Maruwai Coal",persebaran_nasional:"Sumatera dan Kalimantan.",foto_url:""},
+  {id:"sp011",type:"fauna",nama_indonesia:"Lutung Merah",nama_latin:"Presbytis rubicunda",ordo:"Primates",famili:"Cercopithecidae",genus:"Presbytis",kebiasaan:"Diurnal, arboreal, hidup berkelompok. Herbivora spesialis daun muda, buah, dan biji.",habitat:"Hutan dipterokarp dataran rendah hingga pegunungan, hutan sekunder tua.",lokasi_ditemukan:"Hutan Sekitar PT Lahai Coal",persebaran_nasional:"Endemik Kalimantan.",foto_url:""},
+  {id:"sp012",type:"flora",nama_indonesia:"Balangeran",nama_latin:"Shorea balangeran",ordo:"Malvales",famili:"Dipterocarpaceae",genus:"Shorea",kebiasaan:"Pohon besar hingga 30m, adaptif di lahan basah. Kayu tahan air, cocok untuk revegetasi lahan gambut.",habitat:"Hutan rawa gambut, hutan rawa air tawar, tepian sungai dengan tanah asam.",lokasi_ditemukan:"Area Reklamasi BN1",persebaran_nasional:"Kalimantan Tengah dan Selatan.",foto_url:""}
+];
+
+const LOCATIONS = [
+  'Area Reklamasi BN1',
+  'Area Reklamasi BN2',
+  'Area Reklamasi BMid',
+  'Hutan Sekitar PT Lahai Coal',
+  'Hutan Sekitar PT Maruwai Coal'
+];
+
+const SPECIES_EMOJIS = {
+  fauna: { 'Accipitriformes':'🦅','Primates':'🐒','Bucerotiformes':'🐦','Carnivora':'🐱','Squamata':'🦎','default':'🦌' },
+  flora: { 'Malvales':'🌳','Caryophyllales':'🪴','Laurales':'🌲','Cycadales':'🌿','Gentianales':'🌱','default':'🌺' }
+};
+
+// ============================================
+// SUPABASE CLIENT
+// ============================================
+let supabaseClient = null;
+let isConfigured = false;
+
+function initSupabase() {
+  if (SUPABASE_URL === 'https://rappfkbzhwowkuvtingi.supabase.co' || SUPABASE_ANON_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcHBma2J6aHdvd2t1dnRpbmdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MDc3MTAsImV4cCI6MjA5MjA4MzcxMH0.q3B9MRAIozQkR2Nu1XKEjmY2PXT6VLcTk4VYI47Z4CA') {
+    isConfigured = false;
+    return false;
+  }
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    isConfigured = true;
+    return true;
+  } catch (e) {
+    console.error('Supabase init error:', e);
+    isConfigured = false;
+    return false;
+  }
+}
+
+// ============================================
+// DATABASE STORE
+// ============================================
+const Store = {
+  // --- AUTH (tetap pakai sessionStorage, aman untuk admin sederhana) ---
+  login(username, password) {
+    if (username === 'admin' && password === 'admin123') {
+      sessionStorage.setItem('biodiv_auth', JSON.stringify({ isAdmin: true, username, loginAt: new Date().toISOString() }));
+      return { success: true };
+    }
+    return { success: false, error: 'Username atau password salah' };
+  },
+  logout() { sessionStorage.removeItem('biodiv_auth'); },
+  isAdmin() {
+    try { const a = JSON.parse(sessionStorage.getItem('biodiv_auth')); return a && a.isAdmin; }
+    catch { return false; }
+  },
+
+  // --- SPECIES: Supabase ---
+  async getAllSpecies() {
+    if (!isConfigured) return SEED_DATA;
+    const { data, error } = await supabaseClient.from('species').select('*').order('created_at', { ascending: false });
+    if (error) { console.error(error); return []; }
+    return data || [];
+  },
+
+  async getSpeciesById(id) {
+    if (!isConfigured) return SEED_DATA.find(s => s.id === id) || null;
+    const { data, error } = await supabaseClient.from('species').select('*').eq('id', id).single();
+    if (error) { console.error(error); return null; }
+    return data;
+  },
+
+  async addSpecies(speciesData) {
+    if (!isConfigured) { Toast.error('Database belum dikonfigurasi'); return null; }
+    const { data, error } = await supabaseClient.from('species').insert([speciesData]).select().single();
+    if (error) { console.error(error); Toast.error('Gagal menyimpan: ' + error.message); return null; }
+    return data;
+  },
+
+  async updateSpecies(id, updates) {
+    if (!isConfigured) { Toast.error('Database belum dikonfigurasi'); return null; }
+    const { data, error } = await supabaseClient.from('species').update(updates).eq('id', id).select().single();
+    if (error) { console.error(error); Toast.error('Gagal update: ' + error.message); return null; }
+    return data;
+  },
+
+  async deleteSpecies(id) {
+    if (!isConfigured) { Toast.error('Database belum dikonfigurasi'); return false; }
+    // Hapus foto dari storage jika ada
+    const species = await this.getSpeciesById(id);
+    if (species && species.foto_url && species.foto_url.includes('supabase')) {
+      const path = species.foto_url.split('/species-photos/')[1];
+      if (path) await supabaseClient.storage.from('species-photos').remove([path]);
+    }
+    const { error } = await supabaseClient.from('species').delete().eq('id', id);
+    if (error) { console.error(error); Toast.error('Gagal hapus: ' + error.message); return false; }
+    return true;
+  },
+
+  async searchSpecies(query, filters = {}) {
+    const all = await this.getAllSpecies();
+    let result = all;
+    if (query) {
+      const q = query.toLowerCase();
+      result = result.filter(s =>
+        (s.nama_indonesia||'').toLowerCase().includes(q) ||
+        (s.nama_latin||'').toLowerCase().includes(q) ||
+        (s.genus||'').toLowerCase().includes(q) ||
+        (s.famili||'').toLowerCase().includes(q)
+      );
+    }
+    if (filters.type && filters.type !== 'all') result = result.filter(s => s.type === filters.type);
+    if (filters.location) result = result.filter(s => s.lokasi_ditemukan === filters.location);
+    return result;
+  },
+
+  async getStats() {
+    const all = await this.getAllSpecies();
+    const latest = all.length > 0 ? all[0] : null;
+    return {
+      total: all.length,
+      flora: all.filter(s => s.type === 'flora').length,
+      fauna: all.filter(s => s.type === 'fauna').length,
+      latest
+    };
+  },
+
+  // --- UPLOAD FOTO ke Supabase Storage ---
+  async uploadPhoto(file) {
+    if (!isConfigured) { Toast.error('Database belum dikonfigurasi'); return null; }
+    const ext = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { data, error } = await supabaseClient.storage.from('species-photos').upload(fileName, file, {
+      cacheControl: '3600', upsert: false, contentType: file.type
+    });
+    if (error) { console.error(error); Toast.error('Gagal upload foto: ' + error.message); return null; }
+    const { data: urlData } = supabaseClient.storage.from('species-photos').getPublicUrl(fileName);
+    return urlData.publicUrl;
+  },
+
+  // --- SEED database dengan 12 spesies awal ---
+  async seedIfEmpty() {
+    if (!isConfigured) return;
+    const { count } = await supabaseClient.from('species').select('*', { count: 'exact', head: true });
+    if (count === 0) {
+      Toast.info('Memuat data spesies awal...');
+      const toInsert = SEED_DATA.map(s => ({
+        id: s.id,
+        type: s.type,
+        nama_indonesia: s.nama_indonesia,
+        nama_latin: s.nama_latin,
+        ordo: s.ordo,
+        famili: s.famili,
+        genus: s.genus,
+        kebiasaan: s.kebiasaan,
+        habitat: s.habitat,
+        lokasi_ditemukan: s.lokasi_ditemukan,
+        persebaran_nasional: s.persebaran_nasional,
+        foto_url: s.foto_url || ''
+      }));
+      const { error } = await supabaseClient.from('species').insert(toInsert);
+      if (!error) Toast.success('12 spesies awal berhasil dimuat!');
+      else console.error('Seed error:', error);
+    }
+  }
+};
+
+// ============================================
+// TOAST
+// ============================================
+const Toast = {
+  show(message, type = 'success', duration = 3500) {
+    const container = document.getElementById('toast-container');
+    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span style="flex-shrink:0">${icons[type]||icons.info}</span><span class="toast-message">${message}</span><span class="toast-close" onclick="this.closest('.toast').remove()">✕</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, duration);
+  },
+  success(m) { this.show(m, 'success'); },
+  error(m) { this.show(m, 'error'); },
+  warning(m) { this.show(m, 'warning'); },
+  info(m) { this.show(m, 'info'); }
+};
+
+// ============================================
+// MODAL
+// ============================================
+function showModal({ title, message, confirmText = 'Ya, Hapus', cancelText = 'Batal', type = 'danger', onConfirm }) {
+  const existing = document.querySelector('.modal-backdrop');
+  if (existing) existing.remove();
+  const icons = { danger: '⚠️', warning: '⚠️', info: 'ℹ️', success: '✅' };
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.innerHTML = `
+    <div class="modal">
+      <div class="modal-header"><h3 class="modal-title">${icons[type]||''} ${title}</h3></div>
+      <div class="modal-body"><p>${message}</p></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">${cancelText}</button>
+        <button class="btn btn-${type === 'danger' ? 'danger' : 'primary'}" id="modal-confirm">${confirmText}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(backdrop);
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) backdrop.remove(); });
+  document.getElementById('modal-cancel').addEventListener('click', () => backdrop.remove());
+  document.getElementById('modal-confirm').addEventListener('click', () => { backdrop.remove(); if (onConfirm) onConfirm(); });
+  const esc = (e) => { if (e.key === 'Escape') { backdrop.remove(); document.removeEventListener('keydown', esc); }};
+  document.addEventListener('keydown', esc);
+}
+
+// ============================================
+// LOADING
+// ============================================
+function showLoading(text = 'Memuat...') {
+  const existing = document.getElementById('loading-overlay');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'loading-overlay';
+  el.className = 'loading-overlay';
+  el.innerHTML = `<div class="loading-spinner"></div><div class="loading-text">${text}</div>`;
+  document.body.appendChild(el);
+}
+function hideLoading() {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.remove();
+}
+
+// ============================================
+// HELPERS
+// ============================================
+function getSpeciesEmoji(type, ordo) {
+  const group = SPECIES_EMOJIS[type] || SPECIES_EMOJIS.fauna;
+  return group[ordo] || group['default'];
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+}
+
+// ============================================
+// NAVIGATION COMPONENTS
+// ============================================
+function renderSidebar(activePage) {
+  const isAdmin = Store.isAdmin();
+  return `
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="public/images/logo.png" alt="AlamTri Logo" class="sidebar-logo" onerror="this.style.display='none'">
+        <div class="sidebar-brand">
+          <span class="sidebar-brand-name">Katalog Biodiversitas</span>
+          <span class="sidebar-brand-sub">AlamTri Minerals Indonesia</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Menu Utama</div>
+          <a class="sidebar-link ${activePage === 'catalog' ? 'active' : ''}" onclick="navigateTo('${isAdmin ? '/admin' : '/catalog'}')">
+            <span class="sidebar-link-icon">📋</span><span>Katalog Spesies</span>
+          </a>
+        </div>
+        ${isAdmin ? `
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Admin</div>
+          <a class="sidebar-link ${activePage === 'add' ? 'active' : ''}" onclick="navigateTo('/admin/add')">
+            <span class="sidebar-link-icon">➕</span><span>Tambah Spesies</span>
+          </a>
+        </div>` : ''}
+      </nav>
+      <div class="sidebar-footer">
+        ${isAdmin ? `
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">A</div>
+          <div><div class="sidebar-user-name">Administrator</div><div class="sidebar-user-role">Admin Access</div></div>
+        </div>
+        <a class="sidebar-link" onclick="doLogout()" style="margin-top:8px;color:var(--color-error)">
+          <span class="sidebar-link-icon">🚪</span><span>Logout</span>
+        </a>` : `
+        <a class="sidebar-link" onclick="navigateTo('/login')">
+          <span class="sidebar-link-icon">🔐</span><span>Login Admin</span>
+        </a>
+        <a class="sidebar-link" onclick="navigateTo('/')" style="margin-top:4px">
+          <span class="sidebar-link-icon">🏠</span><span>Kembali ke Beranda</span>
+        </a>`}
+      </div>
+    </aside>`;
+}
+
+function renderBottomNav(activePage) {
+  const isAdmin = Store.isAdmin();
+  return `
+    <nav class="bottom-nav" id="bottom-nav">
+      <a class="bottom-nav-item ${activePage === 'catalog' ? 'active' : ''}" onclick="navigateTo('${isAdmin ? '/admin' : '/catalog'}')">
+        <span class="bottom-nav-icon">📋</span><span>Katalog</span>
+      </a>
+      ${isAdmin ? `
+      <a class="bottom-nav-item ${activePage === 'add' ? 'active' : ''}" onclick="navigateTo('/admin/add')">
+        <span class="bottom-nav-icon">➕</span><span>Tambah</span>
+      </a>
+      <a class="bottom-nav-item" onclick="doLogout()">
+        <span class="bottom-nav-icon">🚪</span><span>Logout</span>
+      </a>` : `
+      <a class="bottom-nav-item" onclick="navigateTo('/login')">
+        <span class="bottom-nav-icon">👤</span><span>Admin</span>
+      </a>`}
+      <a class="bottom-nav-item" onclick="navigateTo('/')">
+        <span class="bottom-nav-icon">🏠</span><span>Beranda</span>
+      </a>
+    </nav>`;
+}
+
+function renderMobileHeader() {
+  return `
+    <div class="mobile-header">
+      <div class="mobile-header-logo">
+        <img src="public/images/logo.png" alt="Logo" onerror="this.style.display='none'">
+        <span class="mobile-header-title">Katalog Biodiversitas</span>
+      </div>
+    </div>`;
+}
+
+// ============================================
+// SETUP BANNER (saat belum dikonfigurasi)
+// ============================================
+function renderSetupBanner() {
+  return `
+    <div class="setup-banner">
+      <h3>⚙️ Langkah Setup: Hubungkan ke Database Supabase</h3>
+      <p style="font-size:var(--text-sm);color:#664d03;margin-bottom:12px">Website ini perlu dihubungkan ke Supabase agar data bisa diakses semua orang. Ikuti langkah di panduan setup!</p>
+      <ol>
+        <li>Daftar & buat project di <strong>supabase.com</strong></li>
+        <li>Jalankan SQL di file <code>setup-database.sql</code></li>
+        <li>Salin <strong>Project URL</strong> & <strong>anon key</strong> ke dalam <code>index.html</code> (baris SUPABASE_URL & SUPABASE_ANON_KEY)</li>
+        <li>Upload ke hosting dan selesai! 🎉</li>
+      </ol>
+      <p style="margin-top:12px;font-size:var(--text-xs);color:#856404">💡 Saat ini website menampilkan data preview saja (tidak tersimpan ke database)</p>
+    </div>`;
+}
+
+// ============================================
+// PAGE RENDERERS
+// ============================================
+
+// ── LANDING PAGE ──
+function renderLandingPage() {
+  const app = document.getElementById('app');
+  let particles = '';
+  for (let i = 0; i < 30; i++) {
+    const size = Math.random() * 4 + 2;
+    const left = Math.random() * 100;
+    const duration = Math.random() * 15 + 10;
+    const delay = Math.random() * 10;
+    const colors = ['rgba(44,165,141,0.3)','rgba(122,182,72,0.3)','rgba(232,131,42,0.2)','rgba(255,255,255,0.15)'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    particles += `<div class="particle" style="width:${size}px;height:${size}px;left:${left}%;background:${color};animation-duration:${duration}s;animation-delay:${delay}s"></div>`;
+  }
+  app.innerHTML = `
+    <div class="landing-page" id="landing-page">
+      <div class="landing-particles">${particles}</div>
+      <div class="landing-card">
+        <img src="public/images/logo.png" alt="AlamTri Logo" class="landing-logo" onerror="this.style.display='none'">
+        <h1 class="landing-title">Katalog Biodiversitas</h1>
+        <p class="landing-subtitle">Dokumentasi Flora & Fauna Digital</p>
+        <p class="landing-company">PT AlamTri Minerals Indonesia</p>
+        <div class="landing-actions">
+          <button class="landing-btn-guest" onclick="navigateTo('/catalog')">🌿 Masuk sebagai Pengunjung</button>
+          <button class="landing-btn-admin" onclick="navigateTo('/login')">🔐 Login Admin</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── CATALOG PAGE ──
+async function renderCatalogPage() {
+  const app = document.getElementById('app');
+  const isAdmin = Store.isAdmin();
+
+  // Render kerangka dulu
+  app.innerHTML = `
+    ${renderSidebar('catalog')}
+    <div class="app-main">
+      ${renderMobileHeader()}
+      <div class="app-content page-enter">
+        ${!isConfigured && isAdmin ? renderSetupBanner() : ''}
+        <div id="stats-area"></div>
+        <div class="catalog-header">
+          <div class="catalog-title-row">
+            <h1>Katalog Spesies <span class="catalog-count" id="species-count"></span></h1>
+            ${isAdmin ? `<button class="btn btn-primary btn-lg" onclick="navigateTo('/admin/add')">➕ Tambah Spesies</button>` : ''}
+          </div>
+        </div>
+        <div class="catalog-controls">
+          <div class="search-container">
+            <input type="text" class="search-input" id="search-input" placeholder="Cari spesies..." autocomplete="off">
+            <span class="search-icon">🔍</span>
+            <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
+          </div>
+          <div class="filter-chips" id="filter-chips">
+            <button class="filter-chip active" data-type="all" onclick="setTypeFilter('all', this)">Semua</button>
+            <button class="filter-chip" data-type="flora" onclick="setTypeFilter('flora', this)">🌿 Flora</button>
+            <button class="filter-chip" data-type="fauna" onclick="setTypeFilter('fauna', this)">🦎 Fauna</button>
+            <select class="form-select" id="location-filter" onchange="setLocationFilter(this.value)" style="max-width:260px;padding:var(--space-2) var(--space-4);font-size:var(--text-sm);border-radius:var(--radius-full)">
+              <option value="">📍 Semua Lokasi</option>
+              ${LOCATIONS.map(l => `<option value="${l}">${l}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="species-grid" id="species-grid">
+          ${[1,2,3,4,5,6].map(() => `
+            <div class="skeleton-card">
+              <div class="skeleton skeleton-img"></div>
+              <div class="skeleton-body">
+                <div class="skeleton skeleton-line" style="width:70%"></div>
+                <div class="skeleton skeleton-line" style="width:50%"></div>
+                <div class="skeleton skeleton-line" style="width:40%;height:20px;border-radius:20px"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+      ${renderBottomNav('catalog')}
+    </div>`;
+
+  currentFilters = { type: 'all', location: '', query: '' };
+
+  // Load data async
+  if (isAdmin) {
+    const stats = await Store.getStats();
+    const statsArea = document.getElementById('stats-area');
+    if (statsArea) statsArea.innerHTML = `
+      <div class="stats-bar">
+        <div class="stat-card stagger-item" style="animation-delay:100ms">
+          <div class="stat-icon">🌍</div>
+          <div class="stat-value" id="stat-total">${stats.total}</div>
+          <div class="stat-label">Total Spesies</div>
+        </div>
+        <div class="stat-card stagger-item" style="animation-delay:200ms">
+          <div class="stat-icon">🌿</div>
+          <div class="stat-value" id="stat-flora">${stats.flora}</div>
+          <div class="stat-label">Flora</div>
+        </div>
+        <div class="stat-card stagger-item" style="animation-delay:300ms">
+          <div class="stat-icon">🦎</div>
+          <div class="stat-value" id="stat-fauna">${stats.fauna}</div>
+          <div class="stat-label">Fauna</div>
+        </div>
+        <div class="stat-card stagger-item" style="animation-delay:400ms">
+          <div class="stat-icon">🆕</div>
+          <div class="stat-value" style="font-size:var(--text-sm);margin-top:8px">${stats.latest ? stats.latest.nama_indonesia : '-'}</div>
+          <div class="stat-label">Terbaru</div>
+        </div>
+      </div>`;
+  }
+
+  await renderSpeciesGrid();
+
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce(async (e) => {
+      currentFilters.query = e.target.value;
+      const clearBtn = document.getElementById('search-clear');
+      if (e.target.value) clearBtn.classList.add('visible');
+      else clearBtn.classList.remove('visible');
+      await renderSpeciesGrid();
+    }, 350));
+  }
+}
+
+let currentFilters = { type: 'all', location: '', query: '' };
+
+function setTypeFilter(type, el) {
+  currentFilters.type = type;
+  document.querySelectorAll('.filter-chip[data-type]').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderSpeciesGrid();
+}
+
+function setLocationFilter(location) {
+  currentFilters.location = location;
+  renderSpeciesGrid();
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.remove('visible');
+  currentFilters.query = '';
+  renderSpeciesGrid();
+}
+
+async function renderSpeciesGrid() {
+  const grid = document.getElementById('species-grid');
+  const countEl = document.getElementById('species-count');
+  if (!grid) return;
+  const isAdmin = Store.isAdmin();
+  const species = await Store.searchSpecies(currentFilters.query, currentFilters);
+
+  if (countEl) countEl.textContent = `(${species.length} spesies)`;
+
+  if (species.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-state-icon">🔍</div>
+        <h3 class="empty-state-title">Tidak ada spesies ditemukan</h3>
+        <p class="empty-state-text">Coba ubah kata kunci pencarian atau filter yang digunakan.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = species.map((s, i) => {
+    const emoji = getSpeciesEmoji(s.type, s.ordo);
+    return `
+      <div class="card stagger-item" style="animation-delay:${Math.min(i * 80, 600)}ms" onclick="navigateTo('/species/${s.id}')" id="card-${s.id}">
+        ${isAdmin ? `
+        <div class="admin-card-actions">
+          <button class="admin-action-btn edit" onclick="event.stopPropagation();navigateTo('/admin/edit/${s.id}')" title="Edit">✏️</button>
+          <button class="admin-action-btn delete" onclick="event.stopPropagation();confirmDelete('${s.id}','${s.nama_indonesia}')" title="Hapus">🗑️</button>
+        </div>` : ''}
+        <div class="card-image-wrapper">
+          ${s.foto_url ? `<img src="${s.foto_url}" alt="${s.nama_indonesia}" class="card-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'species-image-placeholder card-image\\'>${emoji}</div>'">` :
+          `<div class="species-image-placeholder card-image">${emoji}</div>`}
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${s.nama_indonesia}</h3>
+          <p class="card-subtitle">${s.nama_latin}</p>
+          <div style="display:flex;gap:var(--space-2);flex-wrap:wrap">
+            <span class="badge badge-${s.type}">${s.type === 'flora' ? '🌿' : '🦎'} ${s.type.charAt(0).toUpperCase() + s.type.slice(1)}</span>
+            <span class="badge badge-location">📍 ${(s.lokasi_ditemukan||'').replace('Area Reklamasi ','').replace('Hutan Sekitar ','')}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function confirmDelete(id, name) {
+  showModal({
+    title: 'Hapus Spesies',
+    message: `Apakah Anda yakin ingin menghapus <strong>${name}</strong>? Tindakan ini tidak dapat dibatalkan.`,
+    confirmText: 'Ya, Hapus',
+    type: 'danger',
+    onConfirm: async () => {
+      showLoading('Menghapus...');
+      const ok = await Store.deleteSpecies(id);
+      hideLoading();
+      if (ok) {
+        Toast.success(`${name} berhasil dihapus`);
+        await renderSpeciesGrid();
+        // Update stats
+        const stats = await Store.getStats();
+        const t = document.getElementById('stat-total'), f = document.getElementById('stat-flora'), fa = document.getElementById('stat-fauna');
+        if (t) t.textContent = stats.total;
+        if (f) f.textContent = stats.flora;
+        if (fa) fa.textContent = stats.fauna;
+      }
+    }
+  });
+}
+
+// ── DETAIL PAGE ──
+async function renderDetailPage(id) {
+  const app = document.getElementById('app');
+  const isAdmin = Store.isAdmin();
+
+  app.innerHTML = `
+    ${renderSidebar('detail')}
+    <div class="app-main">
+      ${renderMobileHeader()}
+      <div class="app-content page-enter">
+        <div class="detail-page">
+          <a class="detail-back" onclick="navigateTo('${isAdmin ? '/admin' : '/catalog'}')">← Kembali ke Katalog</a>
+          <div style="height:300px;border-radius:var(--radius-xl);background:linear-gradient(135deg,var(--color-cream-warm),var(--color-gray-100));display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:24px">⏳</div>
+          <div class="skeleton skeleton-line" style="width:40%;height:32px;margin-bottom:12px"></div>
+          <div class="skeleton skeleton-line" style="width:30%;height:20px;margin-bottom:20px"></div>
+        </div>
+      </div>
+      ${renderBottomNav('detail')}
+    </div>`;
+
+  const species = await Store.getSpeciesById(id);
+
+  if (!species) {
+    app.innerHTML = `<div class="empty-state" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div class="empty-state-icon">❌</div>
+      <h3 class="empty-state-title">Spesies tidak ditemukan</h3>
+      <button class="btn btn-primary" onclick="navigateTo('${isAdmin ? '/admin' : '/catalog'}')" style="margin-top:24px">Kembali ke Katalog</button>
+    </div>`;
+    return;
+  }
+
+  const emoji = getSpeciesEmoji(species.type, species.ordo);
+  const backRoute = isAdmin ? '/admin' : '/catalog';
+
+  app.innerHTML = `
+    ${renderSidebar('detail')}
+    <div class="app-main">
+      ${renderMobileHeader()}
+      <div class="app-content page-enter">
+        <div class="detail-page">
+          <a class="detail-back" onclick="navigateTo('${backRoute}')">← Kembali ke Katalog</a>
+          ${species.foto_url ?
+            `<img src="${species.foto_url}" alt="${species.nama_indonesia}" class="detail-hero" onerror="this.outerHTML='<div class=\\'detail-hero\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:120px;background:linear-gradient(135deg,var(--color-cream-warm),var(--color-gray-100))\\'>${emoji}</div>'">` :
+            `<div class="detail-hero" style="display:flex;align-items:center;justify-content:center;font-size:120px;background:linear-gradient(135deg,var(--color-cream-warm),var(--color-gray-100))">${emoji}</div>`
+          }
+          <div class="detail-header">
+            <h1 class="detail-name">${species.nama_indonesia}</h1>
+            <p class="detail-latin">${species.nama_latin}</p>
+            <div class="detail-badges">
+              <span class="badge badge-${species.type}">${species.type === 'flora' ? '🌿' : '🦎'} ${species.type.charAt(0).toUpperCase() + species.type.slice(1)}</span>
+              <span class="badge badge-location">📍 ${species.lokasi_ditemukan}</span>
+            </div>
+          </div>
+          <div class="detail-section stagger-item" style="animation-delay:100ms">
+            <div class="detail-section-title"><span class="detail-section-icon">🔬</span> Taksonomi</div>
+            <div class="detail-field"><span class="detail-field-label">Ordo</span><span class="detail-field-value">${species.ordo}</span></div>
+            <div class="detail-field"><span class="detail-field-label">Famili</span><span class="detail-field-value">${species.famili}</span></div>
+            <div class="detail-field"><span class="detail-field-label">Genus</span><span class="detail-field-value"><em>${species.genus}</em></span></div>
+          </div>
+          <div class="detail-section stagger-item" style="animation-delay:200ms">
+            <div class="detail-section-title"><span class="detail-section-icon">🧬</span> Ekologi</div>
+            <div class="detail-field"><span class="detail-field-label">Kebiasaan</span><span class="detail-field-value">${species.kebiasaan}</span></div>
+            <div class="detail-field"><span class="detail-field-label">Habitat</span><span class="detail-field-value">${species.habitat}</span></div>
+          </div>
+          <div class="detail-section stagger-item" style="animation-delay:300ms">
+            <div class="detail-section-title"><span class="detail-section-icon">🗺️</span> Geografi</div>
+            <div class="detail-field"><span class="detail-field-label">Lokasi Ditemukan</span><span class="detail-field-value">${species.lokasi_ditemukan}</span></div>
+            <div class="detail-field"><span class="detail-field-label">Persebaran</span><span class="detail-field-value">${species.persebaran_nasional}</span></div>
+          </div>
+          ${isAdmin ? `
+          <div class="detail-actions stagger-item" style="animation-delay:400ms">
+            <button class="btn btn-accent" onclick="navigateTo('/admin/edit/${species.id}')">✏️ Edit Spesies</button>
+            <button class="btn btn-danger" onclick="confirmDeleteDetail('${species.id}','${species.nama_indonesia}')">🗑️ Hapus</button>
+          </div>` : ''}
+        </div>
+      </div>
+      ${renderBottomNav('detail')}
+    </div>`;
+}
+
+function confirmDeleteDetail(id, name) {
+  showModal({
+    title: 'Hapus Spesies',
+    message: `Apakah Anda yakin ingin menghapus <strong>${name}</strong>?`,
+    type: 'danger',
+    onConfirm: async () => {
+      showLoading('Menghapus...');
+      const ok = await Store.deleteSpecies(id);
+      hideLoading();
+      if (ok) {
+        Toast.success(`${name} berhasil dihapus`);
+        navigateTo('/admin');
+      }
+    }
+  });
+}
+
+// ── LOGIN PAGE ──
+function renderLoginPage() {
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-header">
+          <img src="public/images/logo.png" alt="AlamTri Logo" class="login-logo" onerror="this.style.display='none'">
+          <h1 class="login-title">Admin Portal</h1>
+          <p class="login-subtitle">Katalog Biodiversitas Digital</p>
+        </div>
+        <div class="login-error" id="login-error">Username atau password salah</div>
+        <div class="login-form">
+          <div class="login-input-group">
+            <span class="login-input-icon">👤</span>
+            <input type="text" class="login-input" id="login-username" placeholder="Username" autocomplete="username">
+          </div>
+          <div class="login-input-group">
+            <span class="login-input-icon">🔒</span>
+            <input type="password" class="login-input" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLogin()">
+            <span class="login-toggle-password" onclick="togglePassword()">👁️</span>
+          </div>
+          <button class="btn btn-primary btn-lg" id="login-submit" onclick="handleLogin()" style="width:100%;margin-top:var(--space-2)">Login</button>
+        </div>
+        <div class="login-back">
+          <a href="#" onclick="navigateTo('/catalog');return false">← Kembali ke Katalog</a>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(() => document.getElementById('login-username').focus(), 100);
+}
+
+function handleLogin() {
+  const username = document.getElementById('login-username').value;
+  const password = document.getElementById('login-password').value;
+  const result = Store.login(username, password);
+  if (result.success) {
+    Toast.success('Login berhasil! Selamat datang, Admin.');
+    navigateTo('/admin');
+  } else {
+    const errorEl = document.getElementById('login-error');
+    errorEl.textContent = result.error;
+    errorEl.classList.add('visible');
+    setTimeout(() => errorEl.classList.remove('visible'), 3000);
+  }
+}
+
+function togglePassword() {
+  const input = document.getElementById('login-password');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// ── SPECIES FORM (Add/Edit) ──
+let currentPhotoFile = null;
+let currentPhotoPreviewUrl = '';
+
+async function renderSpeciesForm(editId) {
+  const app = document.getElementById('app');
+  const isEdit = !!editId;
+  let species = null;
+
+  if (isEdit) {
+    showLoading('Memuat data...');
+    species = await Store.getSpeciesById(editId);
+    hideLoading();
+    if (!species) { Toast.error('Spesies tidak ditemukan'); navigateTo('/admin'); return; }
+  }
+
+  currentPhotoFile = null;
+  currentPhotoPreviewUrl = species ? (species.foto_url || '') : '';
+
+  const title = isEdit ? 'Edit Spesies' : 'Tambah Spesies Baru';
+
+  app.innerHTML = `
+    ${renderSidebar(isEdit ? 'edit' : 'add')}
+    <div class="app-main">
+      ${renderMobileHeader()}
+      <div class="app-content page-enter">
+        <div class="form-page">
+          <a class="detail-back" onclick="navigateTo('/admin')">← Kembali ke Dashboard</a>
+          <h1 style="margin-bottom:var(--space-6)">${title}</h1>
+
+          <div id="species-form">
+            <!-- Basic Info -->
+            <div class="form-card">
+              <div class="form-section-title"><span class="form-section-icon">📋</span> Informasi Dasar</div>
+              <div class="form-group">
+                <label class="form-label">Tipe Spesies</label>
+                <div class="form-radio-group">
+                  <label class="form-radio">
+                    <input type="radio" name="type" value="flora" ${(!species || species.type === 'flora') ? 'checked' : ''}>
+                    <span>🌿 Flora</span>
+                  </label>
+                  <label class="form-radio">
+                    <input type="radio" name="type" value="fauna" ${species && species.type === 'fauna' ? 'checked' : ''}>
+                    <span>🦎 Fauna</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nama Indonesia *</label>
+                  <input type="text" class="form-input" id="namaIndonesia" placeholder="contoh: Elang Jawa" value="${species ? species.nama_indonesia : ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nama Latin *</label>
+                  <input type="text" class="form-input" id="namaLatin" placeholder="contoh: Nisaetus bartelsi" value="${species ? species.nama_latin : ''}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Taxonomy -->
+            <div class="form-card">
+              <div class="form-section-title"><span class="form-section-icon">🔬</span> Taksonomi</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Ordo *</label>
+                  <input type="text" class="form-input" id="ordo" placeholder="contoh: Accipitriformes" value="${species ? species.ordo : ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Famili *</label>
+                  <input type="text" class="form-input" id="famili" placeholder="contoh: Accipitridae" value="${species ? species.famili : ''}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Genus *</label>
+                <input type="text" class="form-input" id="genus" placeholder="contoh: Nisaetus" value="${species ? species.genus : ''}" style="max-width:50%">
+              </div>
+            </div>
+
+            <!-- Ecology -->
+            <div class="form-card">
+              <div class="form-section-title"><span class="form-section-icon">🧬</span> Ekologi</div>
+              <div class="form-group">
+                <label class="form-label">Kebiasaan Hidup</label>
+                <textarea class="form-textarea" id="kebiasaan" placeholder="Deskripsi kebiasaan hidup spesies...">${species ? species.kebiasaan : ''}</textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Habitat</label>
+                <textarea class="form-textarea" id="habitat" placeholder="Deskripsi habitat spesies...">${species ? species.habitat : ''}</textarea>
+              </div>
+            </div>
+
+            <!-- Geography -->
+            <div class="form-card">
+              <div class="form-section-title"><span class="form-section-icon">🗺️</span> Geografi</div>
+              <div class="form-group">
+                <label class="form-label">Lokasi Ditemukan *</label>
+                <select class="form-select" id="lokasiDitemukan">
+                  <option value="">Pilih lokasi...</option>
+                  ${LOCATIONS.map(l => `<option value="${l}" ${species && species.lokasi_ditemukan === l ? 'selected' : ''}>${l}</option>`).join('')}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Persebaran Nasional/Regional</label>
+                <textarea class="form-textarea" id="persebaranNasional" placeholder="Deskripsi persebaran...">${species ? species.persebaran_nasional : ''}</textarea>
+              </div>
+            </div>
+
+            <!-- Photo -->
+            <div class="form-card">
+              <div class="form-section-title"><span class="form-section-icon">📷</span> Foto Spesies</div>
+              <div id="photo-area">
+                ${currentPhotoPreviewUrl ? `
+                <div class="photo-preview" id="photo-preview">
+                  <img src="${currentPhotoPreviewUrl}" alt="Preview">
+                  <button type="button" class="photo-preview-remove" onclick="removePhoto()">✕</button>
+                </div>` : `
+                <div class="photo-upload" id="photo-upload" onclick="document.getElementById('photo-file').click()">
+                  <div class="photo-upload-icon">📷</div>
+                  <p class="photo-upload-text"><strong>Klik untuk upload</strong> atau drag & drop</p>
+                  <p style="font-size:var(--text-xs);color:var(--color-gray-400);margin-top:var(--space-2)">PNG, JPG, WEBP (max 5MB)</p>
+                </div>`}
+              </div>
+              <input type="file" id="photo-file" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoSelect(this)">
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="navigateTo('/admin')">Batal</button>
+              <button type="button" class="btn btn-primary btn-lg" id="btn-save-species" onclick="handleSpeciesSubmit('${editId || ''}')">
+                💾 ${isEdit ? 'Simpan Perubahan' : 'Simpan Spesies'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      ${renderBottomNav(isEdit ? 'edit' : 'add')}
+    </div>`;
+
+  setupDragDrop();
+}
+
+function handlePhotoSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { Toast.error('Ukuran file terlalu besar (max 5MB)'); return; }
+  currentPhotoFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    currentPhotoPreviewUrl = e.target.result;
+    const area = document.getElementById('photo-area');
+    area.innerHTML = `
+      <div class="photo-preview" id="photo-preview">
+        <img src="${currentPhotoPreviewUrl}" alt="Preview">
+        <button type="button" class="photo-preview-remove" onclick="removePhoto()">✕</button>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto() {
+  currentPhotoFile = null;
+  currentPhotoPreviewUrl = '';
+  const area = document.getElementById('photo-area');
+  area.innerHTML = `
+    <div class="photo-upload" id="photo-upload" onclick="document.getElementById('photo-file').click()">
+      <div class="photo-upload-icon">📷</div>
+      <p class="photo-upload-text"><strong>Klik untuk upload</strong> atau drag & drop</p>
+      <p style="font-size:var(--text-xs);color:var(--color-gray-400);margin-top:var(--space-2)">PNG, JPG, WEBP (max 5MB)</p>
+    </div>`;
+  setupDragDrop();
+}
+
+function setupDragDrop() {
+  const upload = document.getElementById('photo-upload');
+  if (!upload) return;
+  ['dragenter','dragover'].forEach(e => upload.addEventListener(e, (ev) => { ev.preventDefault(); upload.classList.add('drag-over'); }));
+  ['dragleave','drop'].forEach(e => upload.addEventListener(e, (ev) => { ev.preventDefault(); upload.classList.remove('drag-over'); }));
+  upload.addEventListener('drop', (ev) => {
+    const file = ev.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const input = document.getElementById('photo-file');
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      handlePhotoSelect(input);
+    }
+  });
+}
+
+async function handleSpeciesSubmit(editId) {
+  const data = {
+    type: document.querySelector('input[name="type"]:checked')?.value,
+    nama_indonesia: document.getElementById('namaIndonesia').value.trim(),
+    nama_latin: document.getElementById('namaLatin').value.trim(),
+    ordo: document.getElementById('ordo').value.trim(),
+    famili: document.getElementById('famili').value.trim(),
+    genus: document.getElementById('genus').value.trim(),
+    kebiasaan: document.getElementById('kebiasaan').value.trim(),
+    habitat: document.getElementById('habitat').value.trim(),
+    lokasi_ditemukan: document.getElementById('lokasiDitemukan').value,
+    persebaran_nasional: document.getElementById('persebaranNasional').value.trim(),
+  };
+
+  if (!data.nama_indonesia || !data.nama_latin || !data.ordo || !data.famili || !data.genus || !data.lokasi_ditemukan) {
+    Toast.error('Mohon lengkapi semua field yang wajib diisi (*)');
+    return;
+  }
+
+  const btn = document.getElementById('btn-save-species');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
+
+  // Upload foto jika ada file baru
+  if (currentPhotoFile) {
+    showLoading('Mengupload foto...');
+    const photoUrl = await Store.uploadPhoto(currentPhotoFile);
+    hideLoading();
+    if (photoUrl) data.foto_url = photoUrl;
+    else { if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan'; } return; }
+  } else if (!currentPhotoFile && !currentPhotoPreviewUrl) {
+    data.foto_url = '';
+  } else if (currentPhotoPreviewUrl && currentPhotoPreviewUrl.startsWith('http')) {
+    data.foto_url = currentPhotoPreviewUrl; // URL lama tidak berubah
+  }
+
+  showLoading('Menyimpan data...');
+  let result;
+  if (editId) {
+    result = await Store.updateSpecies(editId, data);
+  } else {
+    result = await Store.addSpecies(data);
+  }
+  hideLoading();
+
+  if (result) {
+    Toast.success(`${data.nama_indonesia} berhasil ${editId ? 'diperbarui' : 'ditambahkan'}!`);
+    currentPhotoFile = null;
+    currentPhotoPreviewUrl = '';
+    navigateTo('/admin');
+  } else {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan'; }
+  }
+}
+
+// ============================================
+// ROUTER
+// ============================================
+function navigateTo(path) {
+  window.location.hash = path;
+}
+
+function doLogout() {
+  Store.logout();
+  Toast.info('Berhasil logout');
+  navigateTo('/');
+}
+
+async function handleRoute() {
+  const hash = window.location.hash.slice(1) || '/';
+  const parts = hash.split('/').filter(Boolean);
+  window.scrollTo(0, 0);
+
+  if (hash === '/' || hash === '') {
+    renderLandingPage();
+  } else if (hash === '/catalog') {
+    await renderCatalogPage();
+  } else if (hash === '/login') {
+    renderLoginPage();
+  } else if (hash === '/admin') {
+    if (!Store.isAdmin()) { navigateTo('/login'); return; }
+    await renderCatalogPage();
+  } else if (hash === '/admin/add') {
+    if (!Store.isAdmin()) { navigateTo('/login'); return; }
+    await renderSpeciesForm(null);
+  } else if (parts[0] === 'admin' && parts[1] === 'edit' && parts[2]) {
+    if (!Store.isAdmin()) { navigateTo('/login'); return; }
+    await renderSpeciesForm(parts[2]);
+  } else if (parts[0] === 'species' && parts[1]) {
+    await renderDetailPage(parts[1]);
+  } else {
+    navigateTo('/');
+  }
+}
+
+// ============================================
+// INIT
+// ============================================
+async function init() {
+  initSupabase();
+
+  // Jika sudah dikonfigurasi, seed data jika DB masih kosong
+  if (isConfigured) {
+    try { await Store.seedIfEmpty(); } catch(e) { console.error('Seed error:', e); }
+  }
+
+  window.addEventListener('hashchange', handleRoute);
+  await handleRoute();
+}
+
+init();
+  </script>
+</body>
+</html>
